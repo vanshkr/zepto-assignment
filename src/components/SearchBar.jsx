@@ -53,6 +53,7 @@ const SearchBar = () => {
       prevSelectedUsers.filter((item) => item.id !== selectedUser.id),
     );
     inputRef.current.focus();
+    setBackspaceActive(false)
   };
   const handleAdditionInSelectedList = (selectedUser) => {
     setSelectedUsers((prevSelectedUsers) => [
