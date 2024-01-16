@@ -54,8 +54,9 @@ const SearchBar = () => {
     const filteredUsers = users.filter(
       (user) =>
         !selectedUsers.some((selectedUser) => selectedUser.id === user.id)
-    );
-    setDisplayedUsers(filteredUsers);
+    )
+    const newFilteredUsers = [...filteredUsers,selectedUser]
+    setDisplayedUsers(newFilteredUsers);
     setSelectedUsers((prevSelectedUsers) =>
       prevSelectedUsers.filter((item) => item.id !== selectedUser.id),
     );
@@ -64,14 +65,15 @@ const SearchBar = () => {
   };
   const handleAdditionInSelectedList = (selectedUser) => {
     setBackspaceActive(false);
+    const filteredUsers = users.filter(
+      (user) =>
+        !selectedUsers.some((selectedUser) => selectedUser.id === user.id)
+    ).filter((user) => user.id !== selectedUser.id);
+    setDisplayedUsers(filteredUsers);
     setSelectedUsers((prevSelectedUsers) => [
       ...prevSelectedUsers,
       selectedUser,
     ]);
-    setDisplayedUsers((prevDisplayedUsers) =>
-      prevDisplayedUsers.filter((user) => user.id !== selectedUser.id),
-    );
-    setValue("");
     inputRef.current.focus();
   };
 
