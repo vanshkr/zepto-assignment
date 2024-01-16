@@ -1,25 +1,31 @@
+import { VscAccount } from "react-icons/vsc";
 
-const Dropdown = ({ users,onAdd }) => {
-    return (
-      <div className="cursor-pointer border-4 border-sky-500 w-fit relative"
+const Dropdown = ({ users, onAdd }) => {
+  return (
+    <div className="cursor-pointer w-fit absolute my-10">
+      <div
+        className={`m-auto z-999 bg-white divide-y divide-gray-100 shadow dark:bg-gray-700 max-h-48 overflow-y-scroll`}
       >
-<div className={`z-10 bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 max-h-${users?.length > 4 ? '56' : 'fit'} overflow-y-${users?.length> 4 ? 'scroll' : 'none'}`}> 
-   <ul className="py-2 text-sm text-gray-700 dark:text-gray-200">
-    { users?.map((user) => (
-            <li key={user?.id} className="flex border-b-4" onClick={() =>onAdd(user) }>
-            <div>
-            <svg className="w-12 h-12 z-1" data-jdenticon-value={user?.id}></svg>
-            </div>
-              <h1>{user?.name}</h1>
-              <h3>{user?.email}</h3>
+        <ul className="py-2 m-auto text-sm text-gray-700 dark:text-gray-200 items-center justify-center">
+          {users?.map((user) => (
+            <li
+              key={user?.id}
+              className="flex p-2 border-b-2"
+              onClick={() => onAdd(user)}
+            >
+              <>
+                <p className="m-1">
+                  <VscAccount className="w-8 h-8" />
+                </p>
+              </>
+              <h1 className="m-1 pt-1">{user?.name}</h1>
+              <h5 className="mx-6 opacity-60 pt-2">{user?.email}</h5>
             </li>
           ))}
-    </ul>
-</div>
-        
+        </ul>
       </div>
-    );
-  };
-  
-  export default Dropdown;
-  
+    </div>
+  );
+};
+
+export default Dropdown;
