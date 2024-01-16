@@ -25,6 +25,7 @@ const SearchBar = () => {
   };
 
   const handleInputChange = (e) => {
+    setBackspaceActive(false);
     setValue(e.target.value);
     const filteredUsers = users.filter(
       (user) =>
@@ -32,30 +33,37 @@ const SearchBar = () => {
         user?.name?.toLowerCase().includes(e.target.value.toLowerCase()),
     );
     setDisplayedUsers(filteredUsers);
-    setBackspaceActive(false);
+    
   };
-  const handleBackspace = () => {
+  const handleBackspace = (e) => {
+    if (e.keyCode !== 8) {
+      setBackspaceActive(false);
+      inputRef.current.focus();
+      return;
+    }
     if (backspaceActive) {
       setBackspaceActive(false);
       handleRemovalFromSelectedList(selectedUsers[selectedUsers.length - 1]);
-      setToggleDisplay(false);
     } else if (value === "" && selectedUsers.length > 0) {
       setBackspaceActive(true);
     }
     inputRef.current.focus();
   };
   const handleRemovalFromSelectedList = (selectedUser) => {
-    setDisplayedUsers((prevDisplayedUsers) => [
-      ...prevDisplayedUsers,
-      selectedUser,
-    ]);
+    setBackspaceActive(false);
+    const filteredUsers = users.filter(
+      (user) =>
+        !selectedUsers.some((selectedUser) => selectedUser.id === user.id)
+    );
+    setDisplayedUsers(filteredUsers);
     setSelectedUsers((prevSelectedUsers) =>
       prevSelectedUsers.filter((item) => item.id !== selectedUser.id),
     );
     inputRef.current.focus();
-    setBackspaceActive(false)
+   
   };
   const handleAdditionInSelectedList = (selectedUser) => {
+    setBackspaceActive(false);
     setSelectedUsers((prevSelectedUsers) => [
       ...prevSelectedUsers,
       selectedUser,
@@ -64,7 +72,6 @@ const SearchBar = () => {
       prevDisplayedUsers.filter((user) => user.id !== selectedUser.id),
     );
     setValue("");
-    setBackspaceActive(false);
     inputRef.current.focus();
   };
 
@@ -97,7 +104,7 @@ const SearchBar = () => {
             className="apperance-none outline-none"
             placeholder="Add User Here ..."
             onChange={(e) => handleInputChange(e)}
-            onKeyDown={handleBackspace}
+            onKeyDown={(e)=>handleBackspace(e)}
             onClick={() => setToggleDisplay(true)}
           />
           {toggleDisplay && displayedUsers.length > 0 && (
