@@ -6,6 +6,7 @@ const SearchBar = () => {
   const [value, setValue] = useState("");
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [showUsers, setShowUsers] = useState([]);
+  const [users, setUsers] = useState([]);
 
   const fetchData = async (value) => {
     try {
@@ -13,57 +14,71 @@ const SearchBar = () => {
         "https://jsonplaceholder.typicode.com/users",
       );
       const data = await response.json();
-
-      const results = data
-        .filter((user) =>
-          user?.name?.toLowerCase().includes(value.toLowerCase()),
-        )
-        .filter((user) => !selectedUsers.includes(user?.name));
-
-      return results;
+      return data;
     } catch (error) {
       console.error("Error fetching data:", error);
       return [];
     }
   };
+  const fetchDataAndLog = async () => {
+    const data = await fetchData(value);
+    setUsers(data);
+  };
+
+  const handleAdditionInSelectedList = (selectedUser) => {
+    setSelectedUsers((prevSelectedUser) => [...prevSelectedUser, selectedUser]);
+    setShowUsers(() => users?.filter((user) => !selectedUsers.some(selectedUser => selectedUser.id === user.id)).filter((item) => !(item.id === selectedUser.id)));
+    setValue("");
+  };
+  const handleInputChange = (e) => {
+    setValue(e.target.value);
+    setShowUsers(() => {
+      const results = users
+        ?.filter((user) => !selectedUsers.some(selectedUser => selectedUser.id === user.id))
+        .filter((user) =>
+          user?.name?.toLowerCase().includes(e.target.value.toLowerCase()),
+        );
+      return results;
+    });
+  };
 
   useEffect(() => {
-    const fetchDataAndLog = async () => {
-      const data = await fetchData(value);
-      setShowUsers(data);
-    };
-
-    if (value.length > 0) {
-      fetchDataAndLog();
-    }
-  }, [value, selectedUsers]);
+    fetchDataAndLog();
+  }, []);
 
   return (
-    <div className="flex">
-      <Chip users={selectedUsers} />
+    <div className="flex flex-wrap border-solid border-b-4 border-black">
+      <Chip
+        users={selectedUsers}
+        onRemove={(user) => {
+          setSelectedUsers((prevSelectedUser) => {
+            return prevSelectedUser.filter((item) => item.id !== user.id);
+          });
+          setShowUsers((prevShowUsers) => [...prevShowUsers, user]);
+        }}
+      />
 
       <div>
         <input
           value={value}
           type="text"
+          className="apperance-none outline-none"
           placeholder="Add User Here ..."
-          onChange={(e) => setValue(e.target.value)}
+          onChange={(e) => handleInputChange(e)}
         />
-        {value.length > 0 && showUsers.length > 0 && (
-          <Dropdown
-            users={showUsers}
-            onAdd={(user) => {
-              setSelectedUsers((prevSelectedUser) => [
-                ...prevSelectedUser,
-                user.name,
-              ]);
-              setValue("");
-            }}
-          />
-        )}
+
+        <Dropdown
+          users={showUsers}
+          onAdd={(user) => handleAdditionInSelectedList(user)}
+        />
       </div>
     </div>
   );
 };
 
 export default SearchBar;
+
+/*
+when add 
+selected->add
+show->remove*/

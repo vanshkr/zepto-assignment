@@ -2,7 +2,7 @@ import SearchBar from "./components/SearchBar";
 
 function App() {
   return (
-    <div className="text-3xl">
+    <div className="m-16 p-8">
     <SearchBar/>
     </div>
   );
